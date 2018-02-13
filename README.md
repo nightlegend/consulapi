@@ -1,2 +1,5 @@
-# consul-dashboard
-A dashboard about consul
+# CONSUL API SERVER
+A api server about consul developed by golang.
+
+
+
