@@ -1,7 +1,7 @@
 consulapi:
-  image: consulapi:latest
+  image: docker.cargosmart.com/app/consulgateway:1.0.0
   ports:
   - 9010:8015
   command: go run server.go
   environment:
-    CONSUL_API: "10.222.46.13:8500"
+    CONSUL_API: "127.0.0.1:8500"

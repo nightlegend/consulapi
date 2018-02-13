@@ -9,6 +9,7 @@ import (
 	"os"
 )
 
+// Init environment
 func init() {
 	os.Setenv("ENV", "dev")
 	log.Info("Init application configure...")
@@ -29,6 +30,8 @@ func init() {
 	log.Info(config.ConsulUrl)
 
 }
+
+// Main function
 func main() {
 	router.Start()
 }
