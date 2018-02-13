@@ -5,3 +5,4 @@ consulapi:
   command: go run server.go
   environment:
     CONSUL_API: "127.0.0.1:8500"
+    ENV: "dev"

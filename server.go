@@ -11,24 +11,24 @@ import (
 
 // Init environment
 func init() {
-	os.Setenv("ENV", "dev")
 	log.Info("Init application configure...")
-	execDirAbsPath, _ := os.Getwd()
-	log.Info("start init env configure")
-	env := os.Getenv("ENV")
-	log.Info("You load env is:" + env)
 
+	var config *conf.Config
+	execDirAbsPath, _ := os.Getwd()
+	env := os.Getenv("ENV")
+	if env == "" {
+		env = "dev"
+	}
 	data, err := ioutil.ReadFile(execDirAbsPath + "/conf/" + env + ".conf.yaml")
 	if err != nil {
 		log.Errorln(err)
 	}
-	var config *conf.Config
 	err = yaml.Unmarshal([]byte(data), &config)
 	if err != nil {
 		log.Errorln(err)
 	}
-	log.Info(config.ConsulUrl)
 
+	log.Info("Load environment is ", env)
 }
 
 // Main function
