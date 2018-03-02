@@ -94,7 +94,7 @@ router.GET("/api/service/list", func(c *gin.Context) {
 })
 ```
 
-### list service
+### reload service
 ```go
 router.GET("/api/service/reload", func(c *gin.Context) {
 	res := consulapi.ReloadData()
