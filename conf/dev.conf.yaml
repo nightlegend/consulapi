@@ -1,1 +1,3 @@
-consulurl: '127.0.0.1:8500'
+consulurl: '10.222.49.65:8500'
+mongourl: 'localhost:27017'
+

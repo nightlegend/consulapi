@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"github.com/gin-gonic/gin"
 	consulapi "github.com/nightlegend/consulapi/core/api"
+	"github.com/nightlegend/consulapi/core/data/constdata"
 	"github.com/nightlegend/consulapi/middleware"
 	"github.com/satori/go.uuid"
 	log "github.com/sirupsen/logrus"
@@ -25,22 +26,20 @@ type KVEntry struct {
 
 func init() {
 	log.Info("set gin mode", gin.ReleaseMode)
-	gin.SetMode(gin.ReleaseMode)
+	// gin.SetMode(gin.ReleaseMode)
 }
 
 // Start a application.
 func Start() {
-
 	router := gin.New()
 	router.Use(middleware.CORSMiddleware())
-
 	// Default route "/"
 	router.GET("/", func(c *gin.Context) {
 		c.JSON(200, gin.H{"stats": "success hit your api server..."})
 	})
 
 	// Delete a service.
-	router.GET("/delete/:id", func(c *gin.Context) {
+	router.GET("/api/service/delete/:id", func(c *gin.Context) {
 		serviceId := c.Param("id")
 		flag := consulapi.ServiceDeRegister(serviceId)
 		if flag {
@@ -51,7 +50,7 @@ func Start() {
 	})
 
 	// Register a service.
-	router.POST("/register", func(c *gin.Context) {
+	router.POST("/api/service/register", func(c *gin.Context) {
 		var registerServiceInfo *ServiceRegistrInfo
 		err := c.BindJSON(&registerServiceInfo)
 		if err != nil {
@@ -66,7 +65,7 @@ func Start() {
 			registerServiceInfo.TAGS = []string{"docker", "server"}
 		}
 		flag := consulapi.RegisterService(registerServiceInfo.ID, registerServiceInfo.NAME, registerServiceInfo.TAGS,
-			registerServiceInfo.ADDRESS, registerServiceInfo.PORT)
+			registerServiceInfo.ADDRESS, registerServiceInfo.PORT, constdata.NEW_REGISTER_TYPE)
 		if flag {
 			c.JSON(http.StatusOK, gin.H{"status": 200, "Message": "register success"})
 		} else {
@@ -75,14 +74,14 @@ func Start() {
 	})
 
 	// Get the services list.
-	router.GET("/list", func(c *gin.Context) {
+	router.GET("/api/service/list", func(c *gin.Context) {
 		serviceList := consulapi.GetAllRegisterService()
 		jsonString, _ := json.Marshal(serviceList)
 		c.JSON(200, gin.H{"stats": "success", "list": string(jsonString)})
 	})
 
 	// Put a key-value to kv store.
-	router.POST("/kv/put", func(c *gin.Context) {
+	router.POST("/api/kv/put", func(c *gin.Context) {
 		var kvEntry *KVEntry
 		err := c.BindJSON(&kvEntry)
 		if err != nil {
@@ -100,16 +99,25 @@ func Start() {
 	})
 
 	// Search key from kv store
-	router.GET("/kv/get:key", func(c *gin.Context) {
+	router.GET("/api/kv/get:key", func(c *gin.Context) {
 		searchKey := c.Param("key")
 		value := consulapi.Get(searchKey)
 		c.JSON(http.StatusOK, gin.H{"StatusCode": 200, "Message": value})
 	})
 
 	// List all kv in kv store
-	router.GET("/kv/list", func(c *gin.Context) {
+	router.GET("/api/kv/list", func(c *gin.Context) {
 		kvList := consulapi.ListAllKV()
 		c.JSON(http.StatusOK, gin.H{"StatusCode": 200, "Message": kvList})
+	})
+
+	router.GET("/api/service/reload", func(c *gin.Context) {
+		res := consulapi.ReloadData()
+		if res {
+			c.JSON(http.StatusOK, gin.H{"StatusCode": 200, "Message": "Reload Data Successful"})
+		} else {
+			c.JSON(http.StatusOK, gin.H{"StatusCode": 201, "Message": "Reload Failed"})
+		}
 	})
 
 	// Server listen the port: 8015

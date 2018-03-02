@@ -15,6 +15,7 @@ func init() {
 
 	var config *conf.Config
 	execDirAbsPath, _ := os.Getwd()
+	os.Setenv("CONSUL_API", "10.222.49.65:8500")
 	env := os.Getenv("ENV")
 	if env == "" {
 		env = "dev"
