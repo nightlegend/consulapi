@@ -1,9 +1,6 @@
 # CONSUL API SERVER
 A consul api server developed by golang.
 
-## Description
-> a high level api for consul, it`s provide register/deplet/query service api, hope it can make your work efficent and convenience.
-
 
 ## Run
 
